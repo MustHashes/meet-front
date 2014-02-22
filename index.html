@@ -11,33 +11,50 @@
 				display: inline-block;
 				background-color: #FF3D32;
 				border-radius: 30px 30px 0 0;
+				transition-property: height, top, background-color;
+				-webkit-transition-property: height, top, background-color;
+				transition-duration: 4s;
+  				transition-delay: 2s;
+  				-webkit-transition-duration: 4s;
+  				-webkit-transition-delay: 2s;
 			}
 
 		</style>
 		<script>
 			var update = function(data){
-				var bar_width = $('#chart').width() /(data.length * 2);
+				var bar_width = $('#chart').width() /($('.user').length * 2);
 				if(window.innerWidth <=520){
-					bar_width = $('#chart').width() /data.length;
+					bar_width = $('#chart').width() /$('.user').length;
 				}
 				var bar_height = $("#chart").height();
 				for(var user in data){
 					var bar_int = parseInt(user);
 					var bar_top = $("#chart").height() + document.getElementById('chart').offsetTop
-					var bar = '<div class="user bar-' + user + '"></div>';
-					var height = (data[user].score / data.length) * bar_height;
-					if($('.bar-' + user).length != 0){
-						$('.bar-' + user).animate({
-							height: (data[user].score / data.length) * bar_height
-						}, "slow");
+					var bar = '<div class="user bar-' + data[user].user + '"></div>';
+					var bheight = (data[user].score / $('.user').length) * bar_height;
+					if($('.bar-' + data[user].user).length != 0){
+						bheight = (data[user].score / $('.user').length) * bar_height;
+						$('.bar-' + data[user].user).css('top', bar_top-bheight)
+										  .css('height', bheight);
 					}
 					else{
 						$('#chart').append(bar);
-						$('.bar-' + user).css('position', 'absolute')
-							.css('left', (bar_width * bar_int) + 50 )
-							.css('top', bar_top - height)
-							.css('width', bar_width - 20)
-							.css('height', (data[user].score / data.length) * bar_height);
+						if($('.user').length > 1){
+							console.log($('.user').length);
+							bar_int = $('.user').length;
+							$('.bar-' + data[user].user).css('position', 'absolute')
+								.css('left', (bar_width * bar_int) + 50 )
+								.css('top', bar_top - bheight)
+								.css('width', bar_width - 20)
+								.css('height', bheight);
+						}
+						else{
+							$('.bar-' + data[user].user).css('position', 'absolute')
+								.css('left', (bar_width * bar_int) + 50 )
+								.css('top', bar_top - bheight)
+								.css('width', bar_width - 20)
+								.css('height', bheight);
+						}
 					
 					}
 				}
@@ -60,24 +77,6 @@
 			];
 			console.log(data.length);
 			update(data);
-			window.setInterval(function(){
-				$('#chart').html('');
-				var data = [
-				{'user': '1',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '2',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '3',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '4',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '5',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '6',
-					'score': Math.floor(Math.random() * 6)},
-			];
-			update(data);
-			}, 8000);
 			})
 			.on('resize', function(){
 				$('#chart').html('');
@@ -98,23 +97,12 @@
 			update(data);
 			});
 			window.setInterval(function(){
-				$('#chart').html('');
-				var data = [
-				{'user': '1',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '2',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '3',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '4',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '5',
-					'score': Math.floor(Math.random() * 6)},
-				{'user': '6',
-					'score': Math.floor(Math.random() * 6)},
+				var newdata = [
+				{'user': Math.floor(Math.random() * 10),
+					'score': Math.floor(Math.random() * $('.user').length)}
 			];
-			update(data);
-			}, 8000);
+			update(newdata);
+			}, 1000);
 		</script>
 	</head>
 	<body>
