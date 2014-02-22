@@ -1,0 +1,145 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="css/bootswatch.min.css" />
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<style>
+			#chart{
+				min-height: 60%;
+				border: 2px solid #6C6A73;
+			}
+			.user{
+				display: inline-block;
+				background-color: #FF3D32;
+				border-radius: 30px 30px 0 0;
+			}
+
+		</style>
+		<script>
+			var update = function(data){
+				var bar_width = $('#chart').width() /(data.length * 2);
+				if(window.innerWidth <=520){
+					bar_width = $('#chart').width() /data.length;
+				}
+				var bar_height = $("#chart").height();
+				for(var user in data){
+					var bar_int = parseInt(user);
+					var bar_top = $("#chart").height() + document.getElementById('chart').offsetTop
+					var bar = '<div class="user bar-' + user + '"></div>';
+					var height = (data[user].score / data.length) * bar_height;
+					if($('.bar-' + user).length != 0){
+						$('.bar-' + user).animate({
+							height: (data[user].score / data.length) * bar_height
+						}, "slow");
+					}
+					else{
+						$('#chart').append(bar);
+						$('.bar-' + user).css('position', 'absolute')
+							.css('left', (bar_width * bar_int) + 50 )
+							.css('top', bar_top - height)
+							.css('width', bar_width - 20)
+							.css('height', (data[user].score / data.length) * bar_height);
+					
+					}
+				}
+			};
+			
+			$(window).on('load', function(){
+				var data = [
+				{'user': '1',
+					'score': '5'},
+				{'user': '2',
+					'score': '4'},
+				{'user': '3',
+					'score': '3'},
+				{'user': '4',
+					'score': '2'},
+				{'user': '5',
+					'score': '1'},
+				{'user': '6',
+					'score': '5'},
+			];
+			console.log(data.length);
+			update(data);
+			window.setInterval(function(){
+				$('#chart').html('');
+				var data = [
+				{'user': '1',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '2',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '3',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '4',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '5',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '6',
+					'score': Math.floor(Math.random() * 6)},
+			];
+			update(data);
+			}, 8000);
+			})
+			.on('resize', function(){
+				$('#chart').html('');
+				var data = [
+				{'user': '1',
+					'score': '5'},
+				{'user': '2',
+					'score': '4'},
+				{'user': '3',
+					'score': '3'},
+				{'user': '4',
+					'score': '2'},
+				{'user': '5',
+					'score': '1'},
+				{'user': '6',
+					'score': '5'},
+			];
+			update(data);
+			});
+			window.setInterval(function(){
+				$('#chart').html('');
+				var data = [
+				{'user': '1',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '2',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '3',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '4',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '5',
+					'score': Math.floor(Math.random() * 6)},
+				{'user': '6',
+					'score': Math.floor(Math.random() * 6)},
+			];
+			update(data);
+			}, 8000);
+		</script>
+	</head>
+	<body>
+		<header>
+			<nav class="navbar navbar-default" role="navigation">
+				<div class="container-fluid">
+				    <!-- Brand and toggle get grouped for better mobile display -->
+				    <div class="navbar-header">
+				    		<a class="navbar-brand" href="#">MeetServ</a>
+				    </div>
+				</div>
+			</nav>
+		</header>
+		<main id="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-8 col-md-offset-2">
+						<div class="block center-block jumbotron">
+							<div id="chart">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer></footer>
+	</body>
+</html>
