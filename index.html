@@ -5,6 +5,7 @@
 		<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 		<style>
 		ul{
 			list-style: none;
@@ -268,6 +269,10 @@
 				e.preventDefault();
 				transition('static/event-' + $(e.target).attr('data-id') + '.html');
 				//load graph page, user list
+			})
+			.on('click', '.rules', function(e){
+				e.preventDefault();
+				$('#rulesModal').modal();
 			});
 		</script>
 	</head>
@@ -291,12 +296,13 @@
 								<li class="promo"><i class="fa fa-beer fa-5x"></i><h2 class="detail text-center fancy-robot">Level up your charisma!</h2></li>
 							</ul>
 							<button class="btn btn-success start center-block fancy"><h1>Start</h1></button>
-							<button class="btn btn-info start center-block fancy"><h1>Rules</h1></button>
+							<button class="btn btn-info rules center-block fancy"><h1>Rules</h1></button>
 						</div>
 					</div>
 				</div>
 			</div>
 			</div>
+			<div class='modal fade' id='rulesModal' tabindex='-1' role='dialog' aria-labelledby='rulesLabel' aria-hidden='true'><div class='modal-dialog'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button><h2 class='modal-title' id='rulesLabel'>Welcome to AttendApp!</h2></div><div class='modal-body'><h4>AttendApp is a real-time attendance tracking game.  Instead of going around and saying your name and your favorite food, AttendApp relies on your fellow attendees to verify you.  Here's how: </h4><ul><li> - If you're an organizer and you want to enable AttendApp for your event, select "Start->Create Event" and add details like the event name and your phone number</li><li> - If you're an attendee, join the event by using the Android app.  It will show you who of your current contacts have already checked in.</li><li> - Check the event page to see the current leader and a live stream of attendance tracking</li><li>- Organizers: After the event, we pull all the statistics for your event so you can stop relying on someone else's pizza calculator</li><ul></div></div></div></div>
 		</main>
 		<footer></footer>
 	</body>
