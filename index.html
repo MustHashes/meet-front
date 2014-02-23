@@ -130,6 +130,10 @@
 			}
 		</style>
 		<script>
+			var infoForPage = function(frag){
+				
+			};
+
 			var initgraph = function(data){
 				var bar_width = $('#chart').width() /(data.length * 2);
 				if(window.innerWidth <=520){
@@ -209,16 +213,44 @@
 			};
 			var transition = function(frag){
 				$('#content').addClass('exit').removeClass('enter');
-				//var events_list = $.getJSON('http://107.170.73.142:8080/list', function(data){
-				//});
+				var fragData = frag.toLowerCase();
+				var apiData;
+				if(fragData.indexOf('menu') > -1){
+					$.getJSON('http://107.170.73.142:8080/list', function(data){
+					apiData = data;
+					});
+				}
+				else if(fragData.indexOf('event') > -1){
+					var idArray = fragData.split('-');
+
+						console.log(idArray);
+					var id = idArray[1].split('.')[0];
+					console.log(id);
+					$.getJSON('http://107.170.73.142:8080/' + id, function(data){
+					apiData = data;
+					});
+					frag="static/event.html";
+				}
+				else if(fragData.indexOf('create') > -1){
+
+				}
 				setTimeout(function(){
 					$('#content').load(frag, function(req, status, xhr){
-						if(frag.toLowerCase().indexOf('menu') > -1){
-							for(var i = 0; i < 5; i++){
-							var entry = $.parseHTML('<div class="event-id event' + i + '"><h3 class="text-center fancy-robot event-detail"><i class="fa fa-plus-square-o fa-1x white pull-left"></i><a class="event-view">(Event Name 1)</a></h3></div>');
+						if(fragData.indexOf('menu') > -1){	
+							if(apiData !== null){
+							for(var i = 0; i < apiData.length; i++){
+								var entry = $.parseHTML('<div class="event-id event-' + apiData[i]['Id'] +  '"><h3 class="text-center fancy-robot event-detail"><i class="fa fa-plus-square-o fa-1x white pull-left"></i><a data-id="' + apiData[i]['Id'] + '" class="event-view">'+ apiData[i]['Name'] + '</a></h3></div>');
 							$('.events-scrollable').append(entry);
 							}
 						}
+						else{
+						$('.events-scrollable').html('<h2 class="text-center">Sorry, there are no events right now :(</h2>');
+						}
+					}	
+					else if(fragData.indexOf('event') > -1){
+						$('#event-name').html( apiData['Name']);
+					}
+					else{}
 					$('#content').addClass('enter').removeClass('exit');
 				});
 				}, 750);
@@ -227,14 +259,14 @@
 			$(document).on('click', '.start', function(e){
 				e.preventDefault();
 				transition('static/menu.html');
-
 			})
 			.on('click', '.create', function(e){
 				e.preventDefault();
+				transition('static/create.html');
 			})
-			.on('click', 'event-view', function(e){
+			.on('click', '.event-view', function(e){
 				e.preventDefault();
-				transition('static/event.html');
+				transition('static/event-' + $(e.target).attr('data-id') + '.html');
 				//load graph page, user list
 			});
 		</script>
