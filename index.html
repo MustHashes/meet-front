@@ -98,6 +98,7 @@
 				line-height: 1.3;
 				background-color: #1FB230;
 				border-radius: 20px;
+				min-height: 20px;
 			}
 			.start, .rules, .go{
 				color: #fff;
@@ -144,7 +145,16 @@
 			.greenback{
 				background-color: #28b62c;
 			}
+			.vote{
 
+  				margin-top:20px;
+  				display: block;
+  			 	height: 40px;
+
+			}
+			.has-error{
+				box-shadow: 0px 0px 4px 4px rgb(255,0,0);
+			}
 		</style>
 		<script>
 			var infoForPage = function(frag){
@@ -239,10 +249,7 @@
 				}
 				else if(fragData.indexOf('event') > -1){
 					var idArray = fragData.split('-');
-
-						console.log(idArray);
 					var id = idArray[1].split('.')[0];
-					console.log(id);
 					$.getJSON('http://107.170.73.142:8080/' + id, function(data){
 					apiData = data;
 					});
@@ -259,7 +266,6 @@
 									apiData = data
 							  },
 							  error:   function(jqXHR, textStatus, errorThrown) {
-							        console.log('fuck this');
 							  },
 							  dataType: 'text'
 							});
@@ -267,7 +273,6 @@
 					frag = "static/event.html";	
 					fragData = "static/event.html";
 					var id = apiData;
-					console.log(id);
 					$.getJSON('http://107.170.73.142:8080/' + id, function(data){
 						apiData = data;
 					});
@@ -296,7 +301,6 @@
 							  success: function(data, status, xhr) {
 							  		var name = data['User']['Name'];
 							  		$('#event-leader').html(name);
-							  		console.log(name);
 							  },
 							  dataType: 'json'
 							});
@@ -324,8 +328,25 @@
 			})
 			.on('click', '.event-view', function(e){
 				e.preventDefault();
+				
 				transition('static/event-' + $(e.target).attr('data-id') + '.html');
-				//load graph page, user list
+				var decrement = 5;
+				setInterval(function(){
+							var index1 = Math.floor(Math.random() * 799999999) + 1200000000;
+							var index2 = Math.floor(Math.random() * 799999999) + 1200000000;
+							var action = (Math.floor(Math.random() * 2) < 1) ? ' is attending!</h3></div>':(' just confirmed +' +  index2 +'</h3></div>');
+							var ev = $.parseHTML('<div class="vote hidden"><h3 class="white fancy-robot"> +' + index1 + action);
+						$('#stream').last().append(ev);
+						if($('.vote').length > 5){
+							$('.vote')[0].remove();
+						}
+						$('.vote').removeClass('hidden');
+
+					decrement = decrement - 1;
+					if (decrement <= 0){
+						window.clearInterval();
+					}
+				}, 2500);
 			})
 			.on('click', '.rules', function(e){
 				e.preventDefault();
@@ -333,7 +354,50 @@
 			})
 			.on('click', '.go', function(e){
 				e.preventDefault();
-				transition('static/go.html');
+				if($('.has-error').length === 0){
+					transition('static/go.html');
+				}
+			})
+			.on('blur', '.input', function(e){
+				if($(e.target).hasClass('org-num')){
+					var stripped = $('.org-num').val().replace(/[\(\)\.\-\ ]/g, '');
+					console.log(stripped);
+					if(parseInt(stripped) < 12000000000 || parseInt(stripped) > 1999999999 || stripped === '')
+					{
+						console.log(parseInt(stripped) < 1200000000 || parseInt(stripped) > 1999999999);
+						$('.org-num').addClass('has-error');
+						$('.go').addClass('disabled');
+					}
+					else{
+						$('.org-num').removeClass('has-error').html('');
+						$('.go').removeClass('disabled');
+					}
+
+				}
+				else{
+					if($(e.target).val() === ''){
+						$('.event-name').addClass('has-error');
+						$('.go').addClass('disabled');
+					}
+					else{
+						$('.event-name').removeClass('has-error').html('');
+						$('.go').removeClass('disabled');
+					}
+					//event name 
+				}
+
+			})
+			.on('focus', '.input', function(e){
+				e.preventDefault();
+				if($(e.target).hasClass('own-num')){
+					$('.org-num').removeClass('has-error').html('');
+				}
+				else if($(e.target).hasClass('event-name')){
+					$('.event-name').removeClass('has-error').html('');
+				}
+				if($('.has-error').length === 0)){
+					$('.go').removeClass('disabled');
+				}
 			});
 		</script>
 	</head>
@@ -357,13 +421,13 @@
 								<li class="promo"><i class="fa fa-beer fa-5x"></i><h2 class="detail text-center fancy-robot">Level up your charisma!</h2></li>
 							</ul>
 							<button class="btn btn-success start center-block fancy"><h1>Start</h1></button>
-							<button class="btn btn-info rules center-block fancy"><h1>Rules</h1></button>
+							<button class="btn btn-info rules center-block fancy"><h1>Guidelines</h1></button>
 						</div>
 					</div>
 				</div>
 			</div>
 			</div>
-			<div class='modal fade' id='rulesModal' tabindex='-1' role='dialog' aria-labelledby='rulesLabel' aria-hidden='true'><div class='modal-dialog'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button><h2 class='modal-title' id='rulesLabel'>Welcome to AttendApp!</h2></div><div class='modal-body'><h4>AttendApp is a real-time attendance tracking game.  Instead of going around and saying your name and your favorite food, AttendApp relies on your fellow attendees to verify you.  Here's how: </h4><ul><li> - If you're an organizer and you want to enable AttendApp for your event, select "Start->Create Event" and add details like the event name and your phone number</li><li> - If you're an attendee, join the event by using the Android app.  It will show you who of your current contacts have already checked in.</li><li> - Check the event page to see the current leader and a live stream of attendance tracking</li><li>- Organizers: After the event, we pull all the statistics for your event so you can stop relying on someone else's pizza calculator</li><ul></div></div></div></div>
+			<div class='modal fade' id='rulesModal' tabindex='-1' role='dialog' aria-labelledby='rulesLabel' aria-hidden='true'><div class='modal-dialog'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button><h2 class='modal-title' id='rulesLabel'>Welcome to AttendApp!</h2></div><div class='modal-body'><h4>AttendApp is a real-time attendance tracking game.  Instead of going around and saying your name and your favorite food, AttendApp relies on your fellow attendees to verify you.  Here's how: </h4><ul style="padding-left: 0;"><li> - If you're an organizer and you want to enable AttendApp for your event, select "Start->Create Event" and add details like the event name and your phone number</li><li> - If you're an attendee, join the event by using the Android app.  It will show you who of your current contacts have already checked in.</li><li> - Check the event page to see the current leader and a live stream of attendance tracking</li><li>- Organizers: After the event, we pull all the statistics for your event so you can stop relying on someone else's pizza calculator</li><ul></div></div></div></div>
 		</main>
 		<footer></footer>
 	</body>
