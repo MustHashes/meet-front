@@ -8,9 +8,20 @@
 		<style>
 		ul{
 			list-style: none;
+			padding-left: 15%;
 		}
-		li{
+		.promo{
 			padding-bottom: 50px;
+		}
+		i{
+			color: #E8A009;
+			text-shadow: 1px 1px 2px #070707;
+			padding-left: 10px;
+		}
+		a, a:hover{
+			text-decoration:none !important;
+			color: #585959;
+			cursor: pointer;
 		}
 			body{
 				background-image: linear-gradient(0, rgba(255,255,255,.1), rgba(255,255,255,.2));
@@ -36,14 +47,14 @@
 			.fancy{
 				font-family: 'Audiowide', cursive;
 			}
-			.fancy-robo{
+			.fancy-robot{
 				font-family: 'Roboto', sans-serif;
 			}
 			.title{
 				font-size:6em;
 				background-color: ;
 				border-radius: 20px;
-				color: #fff;
+				color:  #22C7FF;
 				text-shadow: -1px -1px 4px #070707;
 				margin-top: 20%;
 			}
@@ -58,28 +69,64 @@
 			.describe{
 				border-radius: 30px;
 				box-shadow: 0px 0px 10px #fff;
+				padding: 20px;
+				margin-bottom: 10%;
 			}
 			.detail{
+				color: #fff;
 				display: inline;
 				padding-left: 20px;
 			}
-			.start{
-				min-width: 100%;
+			.events-scrollable{
+				overflow-y: scroll;
+				max-height: 40%;
+				background: rgba(0,0,0,.2);
+				@media screen and (max-width: 900px){
+					margin-top: 10%;
+				}
+			}
+			.event-detail{
+				padding: 0px !important;
+				max-height: 100px;
+				margin: 4px !important;
+				line-height:1;
+				display: inline;
+			}
+			.event-id{
+				margin: 0 0 4px 0 !important;
+				padding: 6px !important;
+				line-height: 1.3;
+				background-color: #1FB230;
+				border-radius: 20px;
+			}
+			.start, .rules{
 				color: #fff;
+				margin-bottom: 20px;
+				min-width: 400px;
+
+			}
+			.create{
+				margin-bottom: 10%;
 			}
 			#content{
-				transition-property: left, right, top;
-				-webkit-transition-property: left, right, top;
-				transition-duration: 8s;
-  				-webkit-transition-duration: 8s;
+				transition-property: all;
+				-webkit-transition-property: all;
+				transition-duration: .5s;
+  				-webkit-transition-duration: .5s;
+  				transition-delay: 0s;
+  				-webkit-transition-delay: 0s;
 			}
 			.exit{
-				transform: translateZ(0, 1000, 0);
-				-webkit-transform: translateZ(0, 1000, 0);
+				transform: opacity:0;translate3d(-200%, 0, 0);
+				-webkit-transform: translate3d(-200%, 0, 0);
 			}
 			.enter{
-				transform: translateZ(0, -1000, 0);
-				-webkit-transform: translateZ(0, 1000, 0);
+				opacity: 1;
+				transform: translateZ(0, 200%, 0);
+				-webkit-transform: translateZ(0, 200%, 0);
+			}
+			.white{
+				color: #fff;
 			}
 		</style>
 		<script>
@@ -162,23 +209,39 @@
 			};
 			var transition = function(frag){
 				$('#content').addClass('exit').removeClass('enter');
+				//var events_list = $.getJSON('http://107.170.73.142:8080/list', function(data){
+				//});
 				setTimeout(function(){
 					$('#content').load(frag, function(req, status, xhr){
+						if(frag.toLowerCase().indexOf('menu') > -1){
+							for(var i = 0; i < 5; i++){
+							var entry = $.parseHTML('<div class="event-id event' + i + '"><h3 class="text-center fancy-robot event-detail"><i class="fa fa-plus-square-o fa-1x white pull-left"></i><a class="event-view">(Event Name 1)</a></h3></div>');
+							$('.events-scrollable').append(entry);
+							}
+						}
 					$('#content').addClass('enter').removeClass('exit');
 				});
-				}, 4000);
+				}, 750);
 			};
 			
 			$(document).on('click', '.start', function(e){
 				e.preventDefault();
-				transition('static/event.html');
+				transition('static/menu.html');
 
+			})
+			.on('click', '.create', function(e){
+				e.preventDefault();
+			})
+			.on('click', 'event-view', function(e){
+				e.preventDefault();
+				transition('static/event.html');
+				//load graph page, user list
 			});
 		</script>
 	</head>
 	<body>
 		<header></header>
-		<main id="content">
+		<main>
 			<div class="container-fluid">
 				<div class="row">
 					<div class="text-center col-md-6 col-md-offset-3">
@@ -186,18 +249,21 @@
 						<h2 class="fancy-robot text-center subtitle pull-right">find your people</h2>
 					</div>
 				</div>
+				<div id="content">
 				<div class="row">
 					<div class="col-md-8 col-md-offset-2">
-						<div class="describe jumbotron">
-							<ul>
-								<li><i class="fa fa-bolt fa-5x"></i><h3 class="detail text-center">Create an event or join an existing one</h3></li>
-								<li><i class="fa fa-users fa-5x"></i><h3 class="detail text-center">Find your friends, make new ones for fun and profit?</h3></li>
-								<li><i class="fa fa-beer fa-5x"></i><h3 class="detail text-center">Be the first to meet every person for great social justice!</h3></li>
+						<div class="describe">
+							<ul class="fancy-robot">
+								<li class="promo"><i class="fa fa-bolt fa-5x"></i><h2 class="detail text-center fancy-robot">Create an event or join an existing one</h2></li>
+								<li class="promo"><i class="fa fa-users fa-5x"></i><h2 class="detail text-center fancy-robot">Find your friends, make new ones!</h2></li>
+								<li class="promo"><i class="fa fa-beer fa-5x"></i><h2 class="detail text-center fancy-robot">Level up your charisma!</h2></li>
 							</ul>
-							<button class="btn btn-success start btn-lg center-block fancy"><h1>Start</h1></button>
+							<button class="btn btn-success start center-block fancy"><h1>Start</h1></button>
+							<button class="btn btn-info start center-block fancy"><h1>Rules</h1></button>
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 		</main>
 		<footer></footer>
