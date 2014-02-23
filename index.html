@@ -362,9 +362,9 @@
 				if($(e.target).hasClass('org-num')){
 					var stripped = $('.org-num').val().replace(/[\(\)\.\-\ ]/g, '');
 					console.log(stripped);
-					if(parseInt(stripped) < 12000000000 || parseInt(stripped) > 1999999999 || stripped === '')
+					if(parseInt(stripped) < 1000000000 || parseInt(stripped) > 9999999999 || stripped.length <= 0)
 					{
-						console.log(parseInt(stripped) < 1200000000 || parseInt(stripped) > 1999999999);
+						console.log(parseInt(stripped) < 1000000000 || parseInt(stripped) > 1999999999);
 						$('.org-num').addClass('has-error');
 						$('.go').addClass('disabled');
 					}
@@ -395,7 +395,7 @@
 				else if($(e.target).hasClass('event-name')){
 					$('.event-name').removeClass('has-error').html('');
 				}
-				if($('.has-error').length === 0)){
+				if($('.has-error').length === 0){
 					$('.go').removeClass('disabled');
 				}
 			});
