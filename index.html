@@ -81,7 +81,6 @@
 			.events-scrollable{
 				overflow-y: scroll;
 				max-height: 40%;
-				background: rgba(0,0,0,.2);
 				@media screen and (max-width: 900px){
 					margin-top: 10%;
 				}
@@ -100,7 +99,7 @@
 				background-color: #1FB230;
 				border-radius: 20px;
 			}
-			.start, .rules{
+			.start, .rules, .go{
 				color: #fff;
 				margin-bottom: 20px;
 				min-width: 400px;
@@ -129,6 +128,20 @@
 			.white{
 				color: #fff;
 			}
+			.leaderboard, #event-leader{
+				display: inline;
+				max-width: 50%;
+			}
+			.create-title{
+				font-size: 4em;
+				text-align: center;
+			}
+			.input{
+				margin: 0 auto;
+				min-width: 40%;
+				line-height: 2;
+			}
+
 		</style>
 		<script>
 			var infoForPage = function(frag){
@@ -232,8 +245,29 @@
 					});
 					frag="static/event.html";
 				}
-				else if(fragData.indexOf('create') > -1){
+				else if(fragData.indexOf('go') > -1){
+					$.ajax({
+							  type: "POST",
+							  url: 'http://107.170.73.142:8080/create',
+							  async: false,
+							  traditional: false,
+							  data: '{ "User": "+' + $('.org-num').val() + '", "Name": "' + $('.event-name').val() + '"}',
+							  success: function(data, status, xhr) {
+									apiData = data
+							  },
+							  error:   function(jqXHR, textStatus, errorThrown) {
+							        console.log('fuck this');
+							  },
+							  dataType: 'text'
+							});
 
+					frag = "static/event.html";	
+					fragData = "static/event.html";
+					var id = apiData;
+					console.log(id);
+					$.getJSON('http://107.170.73.142:8080/' + id, function(data){
+						apiData = data;
+					});
 				}
 				setTimeout(function(){
 					$('#content').load(frag, function(req, status, xhr){
@@ -250,6 +284,26 @@
 					}	
 					else if(fragData.indexOf('event') > -1){
 						$('#event-name').html( apiData['Name']);
+						$.ajax({
+							  type: "POST",
+							  url: 'http://107.170.73.142:8080/user?',
+							  async: false,
+							  traditional: false,
+							  data: '{ "User": "' + apiData['Leader'] + '" }',
+							  success: function(data, status, xhr) {
+							  		var name = data['User']['Name'];
+							  		$('#event-leader').html(name);
+							  		console.log(name);
+							  },
+							  dataType: 'json'
+							});
+						$.getJSON('http://107.170.73.142:8080/list', function(data){
+							apiData = data;
+							});
+					}
+					else if(fragData.indexOf('create') > -1){
+						$('#content').load(frag, function(req, status, xhr){
+						});
 					}
 					else{}
 					$('#content').addClass('enter').removeClass('exit');
@@ -273,6 +327,10 @@
 			.on('click', '.rules', function(e){
 				e.preventDefault();
 				$('#rulesModal').modal();
+			})
+			.on('click', '.go', function(e){
+				e.preventDefault();
+				transition('static/go.html');
 			});
 		</script>
 	</head>
