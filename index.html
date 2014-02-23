@@ -1,8 +1,21 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="css/bootswatch.min.css" />
+		<link href='http://fonts.googleapis.com/css?family=Audiowide' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<style>
+		ul{
+			list-style: none;
+		}
+		li{
+			padding-bottom: 50px;
+		}
+			body{
+				background-image: linear-gradient(0, rgba(255,255,255,.1), rgba(255,255,255,.2));
+				background-color: #000000;
+			}
 			#chart{
 				min-height: 60%;
 				border: 2px solid #6C6A73;
@@ -11,16 +24,101 @@
 				display: inline-block;
 				background-color: #FF3D32;
 				border-radius: 30px 30px 0 0;
-				transition-property: height, top, background-color;
-				-webkit-transition-property: height, top, background-color;
+			}
+			.animate{
+				transition-property: height, top, background-color, width;
+				-webkit-transition-property: height, top, background-color, width;
 				transition-duration: 4s;
   				transition-delay: 2s;
   				-webkit-transition-duration: 4s;
   				-webkit-transition-delay: 2s;
+				}
+			.fancy{
+				font-family: 'Audiowide', cursive;
 			}
-
+			.fancy-robo{
+				font-family: 'Roboto', sans-serif;
+			}
+			.title{
+				font-size:6em;
+				background-color: ;
+				border-radius: 20px;
+				color: #fff;
+				text-shadow: -1px -1px 4px #070707;
+				margin-top: 20%;
+			}
+			.subtitle{
+				color: #fff;
+				padding-right:40px;
+				@media (max-width: 520px){
+					text-align: center;
+					padding: none;
+				}
+			}
+			.describe{
+				border-radius: 30px;
+				box-shadow: 0px 0px 10px #fff;
+			}
+			.detail{
+				display: inline;
+				padding-left: 20px;
+			}
+			.start{
+				min-width: 100%;
+				color: #fff;
+			}
+			#content{
+				transition-property: left, right, top;
+				-webkit-transition-property: left, right, top;
+				transition-duration: 8s;
+  				-webkit-transition-duration: 8s;
+			}
+			.exit{
+				transform: translateZ(0, 1000, 0);
+				-webkit-transform: translateZ(0, 1000, 0);
+			}
+			.enter{
+				transform: translateZ(0, -1000, 0);
+				-webkit-transform: translateZ(0, 1000, 0);
+			}
 		</style>
 		<script>
+			var initgraph = function(data){
+				var bar_width = $('#chart').width() /(data.length * 2);
+				if(window.innerWidth <=520){
+					bar_width = $('#chart').width() /data.length;
+				}
+
+				var bar_height = $("#chart").height();
+				for(var user in data){
+					var bar_int = parseInt(user);
+					var bar_top = $("#chart").height() + document.getElementById('chart').offsetTop;
+					var bar = '<div class="user bar-' + data[user].user + '" data-score="' + data[user].score + '"></div>';
+					var bheight = (data[user]['score'] / data.length) * bar_height;
+					$('#chart').append(bar);
+					$('.bar-' + user).css('position', 'absolute')
+						.css('left', (bar_width * bar_int) + 50)
+						.css('top', bar_top - bheight)
+						.css('height', bheight)
+						.css('width', bar_width - 20);
+				}
+			};
+			var updateWidth = function(){
+				var bar_width = $('#chart').width() /($('.user').length * 2);
+				if(window.innerWidth <=520){
+					bar_width = $('#chart').width() /$('.user').length;
+				}
+
+				var bar_height = $("#chart").height();
+				var bar_top = $("#chart").height() + document.getElementById('chart').offsetTop;
+				for(var i = 0; i < $(".user").length; i++){
+					var bheight = ($('.user:nth-child(' + i + ')').attr('data-score')/$('.user').length) * bar_height;
+					$('.user:nth-child(' + i + ')').css('left', (bar_width * i) + 50)
+						.css('width', bar_width - 20)
+						.css('top', bar_top-bheight)
+						.css('height', bheight);
+				}
+			};
 			var update = function(data){
 				var bar_width = $('#chart').width() /($('.user').length * 2);
 				if(window.innerWidth <=520){
@@ -28,8 +126,9 @@
 				}
 				var bar_height = $("#chart").height();
 				for(var user in data){
+					console.log("user:" + data[user]);
 					var bar_int = parseInt(user);
-					var bar_top = $("#chart").height() + document.getElementById('chart').offsetTop
+					var bar_top = $("#chart").height() + document.getElementById('chart').offsetTop;
 					var bar = '<div class="user bar-' + data[user].user + '"></div>';
 					var bheight = (data[user].score / $('.user').length) * bar_height;
 					if($('.bar-' + data[user].user).length != 0){
@@ -45,84 +144,57 @@
 							$('.bar-' + data[user].user).css('position', 'absolute')
 								.css('left', (bar_width * bar_int) + 50 )
 								.css('top', bar_top - bheight)
-								.css('width', bar_width - 20)
 								.css('height', bheight);
 						}
 						else{
 							$('.bar-' + data[user].user).css('position', 'absolute')
 								.css('left', (bar_width * bar_int) + 50 )
 								.css('top', bar_top - bheight)
-								.css('width', bar_width - 20)
 								.css('height', bheight);
 						}
 					
 					}
+					for(var i = 0 ; i < $('.user').length; i++){
+						$('.user:nth-child(' + i + ')').css('left', (bar_width * i) + 50)
+										.css('width', bar_width);
+					}
 				}
 			};
+			var transition = function(frag){
+				$('#content').addClass('exit').removeClass('enter');
+				setTimeout(function(){
+					$('#content').load(frag, function(req, status, xhr){
+					$('#content').addClass('enter').removeClass('exit');
+				});
+				}, 4000);
+			};
 			
-			$(window).on('load', function(){
-				var data = [
-				{'user': '1',
-					'score': '5'},
-				{'user': '2',
-					'score': '4'},
-				{'user': '3',
-					'score': '3'},
-				{'user': '4',
-					'score': '2'},
-				{'user': '5',
-					'score': '1'},
-				{'user': '6',
-					'score': '5'},
-			];
-			console.log(data.length);
-			update(data);
-			})
-			.on('resize', function(){
-				$('#chart').html('');
-				var data = [
-				{'user': '1',
-					'score': '5'},
-				{'user': '2',
-					'score': '4'},
-				{'user': '3',
-					'score': '3'},
-				{'user': '4',
-					'score': '2'},
-				{'user': '5',
-					'score': '1'},
-				{'user': '6',
-					'score': '5'},
-			];
-			update(data);
+			$(document).on('click', '.start', function(e){
+				e.preventDefault();
+				transition('static/event.html');
+
 			});
-			window.setInterval(function(){
-				var newdata = [
-				{'user': Math.floor(Math.random() * 10),
-					'score': Math.floor(Math.random() * $('.user').length)}
-			];
-			update(newdata);
-			}, 1000);
 		</script>
 	</head>
 	<body>
-		<header>
-			<nav class="navbar navbar-default" role="navigation">
-				<div class="container-fluid">
-				    <!-- Brand and toggle get grouped for better mobile display -->
-				    <div class="navbar-header">
-				    		<a class="navbar-brand" href="#">MeetServ</a>
-				    </div>
-				</div>
-			</nav>
-		</header>
+		<header></header>
 		<main id="content">
 			<div class="container-fluid">
 				<div class="row">
+					<div class="text-center col-md-6 col-md-offset-3">
+						<h1 class="fancy text-center title">AttendApp</h1>
+						<h2 class="fancy-robot text-center subtitle pull-right">find your people</h2>
+					</div>
+				</div>
+				<div class="row">
 					<div class="col-md-8 col-md-offset-2">
-						<div class="block center-block jumbotron">
-							<div id="chart">
-							</div>
+						<div class="describe jumbotron">
+							<ul>
+								<li><i class="fa fa-bolt fa-5x"></i><h3 class="detail text-center">Create an event or join an existing one</h3></li>
+								<li><i class="fa fa-users fa-5x"></i><h3 class="detail text-center">Find your friends, make new ones for fun and profit?</h3></li>
+								<li><i class="fa fa-beer fa-5x"></i><h3 class="detail text-center">Be the first to meet every person for great social justice!</h3></li>
+							</ul>
+							<button class="btn btn-success start btn-lg center-block fancy"><h1>Start</h1></button>
 						</div>
 					</div>
 				</div>
